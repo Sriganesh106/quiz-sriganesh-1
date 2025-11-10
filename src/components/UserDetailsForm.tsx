@@ -29,6 +29,7 @@ const UserDetailsForm = ({ onSubmit }: UserDetailsFormProps) => {
 
   const [errors, setErrors] = useState<ValidationErrors>({});
   const [touched, setTouched] = useState<Record<string, boolean>>({});
+  const [showEmailSuggestion, setShowEmailSuggestion] = useState(false);
 
   const validateField = (name: string, value: string): string | undefined => {
     switch (name) {
@@ -48,8 +49,7 @@ const UserDetailsForm = ({ onSubmit }: UserDetailsFormProps) => {
       case 'mobile':
         if (!value.trim()) return 'Mobile number is required';
         const cleanNumber = value.replace(/\D/g, '');
-        if (cleanNumber.length < 10) return 'Mobile number must be at least 10 digits';
-        if (cleanNumber.length > 15) return 'Mobile number is too long';
+        if (cleanNumber.length !== 10) return 'Mobile number must be exactly 10 digits';
         return undefined;
 
       case 'college':
@@ -64,7 +64,22 @@ const UserDetailsForm = ({ onSubmit }: UserDetailsFormProps) => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    
+    // Limit mobile number to 10 digits
+    if (name === 'mobile') {
+      const cleanNumber = value.replace(/\D/g, '');
+      if (cleanNumber.length > 10) return;
+      setFormData((prev) => ({ ...prev, [name]: cleanNumber }));
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
+
+    // Show email suggestion for @gmail.com
+    if (name === 'email') {
+      const hasAt = value.includes('@');
+      const endsWithGmail = value.toLowerCase().endsWith('@gmail.com');
+      setShowEmailSuggestion(!hasAt && value.length > 0 && !endsWithGmail);
+    }
 
     // Validate on change if field has been touched
     if (touched[name]) {
@@ -78,6 +93,19 @@ const UserDetailsForm = ({ onSubmit }: UserDetailsFormProps) => {
     setTouched((prev) => ({ ...prev, [name]: true }));
     const error = validateField(name, value);
     setErrors((prev) => ({ ...prev, [name]: error }));
+    
+    // Hide email suggestion on blur
+    if (name === 'email') {
+      setTimeout(() => setShowEmailSuggestion(false), 200);
+    }
+  };
+
+  const handleEmailSuggestionClick = () => {
+    const currentEmail = formData.email;
+    if (!currentEmail.includes('@')) {
+      setFormData((prev) => ({ ...prev, email: currentEmail + '@gmail.com' }));
+      setShowEmailSuggestion(false);
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -130,16 +158,16 @@ const UserDetailsForm = ({ onSubmit }: UserDetailsFormProps) => {
           <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-emerald-400 to-blue-500 rounded-full mb-4 shadow-2xl">
             <Sparkles className="w-10 h-10 text-white" />
           </div>
-          <h1 className="text-4xl font-bold text-white mb-2">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-2 break-words">
             Welcome to Quiz Challenge
           </h1>
-          <p className="text-gray-300 text-lg">
+          <p className="text-gray-300 text-base sm:text-lg break-words">
             Please enter your details to begin
           </p>
         </div>
 
         {/* Form Card */}
-        <div className="bg-white rounded-2xl shadow-2xl p-8">
+        <div className="bg-white rounded-2xl shadow-2xl p-4 sm:p-6 md:p-8">
           <form onSubmit={handleSubmit} noValidate>
             {/* Name Field */}
             <div className="mb-5">
@@ -180,9 +208,19 @@ const UserDetailsForm = ({ onSubmit }: UserDetailsFormProps) => {
                   value={formData.email}
                   onChange={handleChange}
                   onBlur={handleBlur}
+                  onFocus={() => formData.email.length > 0 && !formData.email.includes('@') && setShowEmailSuggestion(true)}
                   placeholder="your.email@example.com"
                   className={getInputClassName('email')}
                 />
+                {showEmailSuggestion && (
+                  <button
+                    type="button"
+                    onMouseDown={handleEmailSuggestionClick}
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-emerald-500 text-white text-xs px-3 py-1 rounded-lg hover:bg-emerald-600 transition-colors shadow-md"
+                  >
+                    + @gmail.com
+                  </button>
+                )}
               </div>
               {touched.email && errors.email && (
                 <p className="mt-1 text-sm text-red-600 flex items-center gap-1">

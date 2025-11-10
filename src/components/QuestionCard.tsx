@@ -60,7 +60,7 @@ export default function QuestionCard({
       }`}
     >
       <div
-        className={`rounded-2xl shadow-2xl p-8 relative overflow-hidden ${
+        className={`rounded-2xl shadow-2xl p-4 sm:p-6 md:p-8 relative overflow-hidden ${
           isBossRound
             ? 'bg-gradient-to-br from-red-50 to-orange-50 border-2 border-red-300'
             : 'bg-white border border-gray-100'
@@ -77,7 +77,7 @@ export default function QuestionCard({
 
         <div className="mb-6 relative">
           <div
-            className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold mb-4 ${
+            className={`inline-flex items-center gap-2 px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-bold mb-4 ${
               isBossRound
                 ? 'bg-gradient-to-r from-red-500 to-orange-500 text-white shadow-lg'
                 : 'bg-gradient-to-r from-emerald-500 to-green-500 text-white shadow-md'
@@ -96,7 +96,7 @@ export default function QuestionCard({
             )}
           </div>
           <h2
-            className={`text-2xl md:text-3xl font-bold leading-relaxed ${
+            className={`text-xl sm:text-2xl md:text-3xl font-bold leading-relaxed break-words ${
               isBossRound ? 'text-red-900' : 'text-gray-900'
             }`}
           >
@@ -114,7 +114,7 @@ export default function QuestionCard({
                 key={option.key}
                 onClick={() => handleSelect(option.key)}
                 disabled={selectedAnswer !== null}
-                className={`w-full text-left p-5 rounded-xl font-medium transition-all duration-200 transform relative group ${
+                className={`w-full text-left p-3 sm:p-4 md:p-5 rounded-xl font-medium transition-all duration-200 transform relative group ${
                   isSelected
                     ? isBossRound
                       ? 'bg-gradient-to-r from-red-600 to-orange-600 text-white scale-[1.02] shadow-2xl border-2 border-red-400'
@@ -132,7 +132,7 @@ export default function QuestionCard({
                     <div className="absolute inset-0 bg-white opacity-20 animate-pulse"></div>
                   </div>
                 )}
-                <div className="flex items-center gap-4 relative z-10">
+                <div className="flex items-center gap-2 sm:gap-3 md:gap-4 relative z-10">
                   <span
                     className={`flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center text-sm font-bold transition-all duration-200 ${
                       isSelected
@@ -144,7 +144,7 @@ export default function QuestionCard({
                   >
                     {optionLabels[index]}
                   </span>
-                  <span className="flex-1 text-base md:text-lg">{option.text}</span>
+                  <span className="flex-1 text-sm sm:text-base md:text-lg break-words">{option.text}</span>
                 </div>
               </button>
             );

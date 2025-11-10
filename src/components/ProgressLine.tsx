@@ -17,7 +17,7 @@ export default function ProgressLine({ currentQuestion, totalQuestions, phase }:
           {isBossRound ? (
             <>
               <Flame className="w-5 h-5 text-red-500 animate-bounce" />
-              <span className="text-sm font-bold text-red-600 animate-pulse">
+              <span className="text-sm font-bold text-white animate-pulse">
                 FINAL BOSS ROUND - Choose Incorrect!
               </span>
               <Flame className="w-5 h-5 text-orange-500 animate-bounce" style={{ animationDelay: '0.1s' }} />

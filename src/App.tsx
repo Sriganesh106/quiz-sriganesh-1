@@ -5,7 +5,6 @@ import BossTransition from './components/BossTransition';
 import ProgressLine from './components/ProgressLine';
 import QuestionCard, { QuizQuestion } from './components/QuestionCard';
 import Timer from './components/Timer';
-import QuestionTimer from './components/QuestionTimer';
 import Results from './components/Results';
 import UserDetailsForm from './components/UserDetailsForm';
 import LeaderboardModal from './components/LeaderboardModal';
@@ -132,9 +131,6 @@ function App() {
     setQuizState('quiz');
   };
 
-  const handleTimeUp = () => {
-    handleAnswer('');
-  };
 
   const finishQuiz = async (finalAnswers: QuizAnswer[]) => {
     const correctCount = finalAnswers.filter((a) => a.isCorrect).length;
@@ -306,21 +302,13 @@ function App() {
         <div className="max-w-4xl mx-auto">
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
             <h1
-              className={`text-2xl md:text-3xl font-bold ${
+              className={`text-xl sm:text-2xl md:text-3xl font-bold break-words text-center sm:text-left ${
                 currentPhase === 'boss' ? 'text-white' : 'text-gray-900'
               }`}
             >
-              Web Dev Quiz Challenge
+              Web Development Quiz Challenge
             </h1>
-            <div className="flex gap-3">
-              <QuestionTimer
-                isRunning={true}
-                onTimeUp={handleTimeUp}
-                timeLimit={45}
-                questionId={currentQuestion.id}
-              />
-              <Timer isRunning={true} onTimeUpdate={setTimeTaken} />
-            </div>
+            <Timer isRunning={true} onTimeUpdate={setTimeTaken} />
           </div>
 
           <ProgressLine

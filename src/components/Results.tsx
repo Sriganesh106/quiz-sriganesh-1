@@ -43,48 +43,48 @@ export default function Results({
           <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-emerald-400 to-blue-500 rounded-full mb-4 shadow-lg">
             <Trophy className="w-10 h-10 text-white" />
           </div>
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">Quiz Complete!</h1>
-          <p className={`text-2xl font-semibold ${performance.color}`}>
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-2 break-words">Quiz Complete!</h1>
+          <p className={`text-xl sm:text-2xl font-semibold ${performance.color} break-words`}>
             {performance.text}
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-gradient-to-br from-emerald-50 to-green-50 rounded-2xl p-6 border-2 border-emerald-200">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 mb-8">
+          <div className="bg-gradient-to-br from-emerald-50 to-green-50 rounded-2xl p-4 sm:p-6 border-2 border-emerald-200">
             <div className="flex items-center justify-center w-12 h-12 bg-emerald-500 rounded-full mb-3 mx-auto">
               <Target className="w-6 h-6 text-white" />
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-emerald-700">
+              <div className="text-2xl sm:text-3xl font-bold text-emerald-700 break-words">
                 {correctAnswers}/{totalQuestions}
               </div>
-              <div className="text-sm text-emerald-600 font-medium mt-1">
+              <div className="text-xs sm:text-sm text-emerald-600 font-medium mt-1 break-words">
                 Correct Answers
               </div>
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-2xl p-6 border-2 border-blue-200">
+          <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-2xl p-4 sm:p-6 border-2 border-blue-200">
             <div className="flex items-center justify-center w-12 h-12 bg-blue-500 rounded-full mb-3 mx-auto">
               <Trophy className="w-6 h-6 text-white" />
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-blue-700">{percentage}%</div>
-              <div className="text-sm text-blue-600 font-medium mt-1">
+              <div className="text-2xl sm:text-3xl font-bold text-blue-700 break-words">{percentage}%</div>
+              <div className="text-xs sm:text-sm text-blue-600 font-medium mt-1 break-words">
                 Accuracy
               </div>
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-6 border-2 border-purple-200">
+          <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-4 sm:p-6 border-2 border-purple-200">
             <div className="flex items-center justify-center w-12 h-12 bg-purple-500 rounded-full mb-3 mx-auto">
               <Clock className="w-6 h-6 text-white" />
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-purple-700">
+              <div className="text-2xl sm:text-3xl font-bold text-purple-700 break-words">
                 {formatTime(timeTaken)}
               </div>
-              <div className="text-sm text-purple-600 font-medium mt-1">
+              <div className="text-xs sm:text-sm text-purple-600 font-medium mt-1 break-words">
                 Time Taken
               </div>
             </div>

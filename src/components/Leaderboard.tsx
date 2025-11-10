@@ -27,7 +27,7 @@ const Leaderboard = ({ currentUserEmail }: LeaderboardProps) => {
   const fetchLeaderboard = async () => {
     try {
       const { data, error } = await supabase.rpc('get_top_leaderboard', {
-        limit_count: 10,
+        limit_count: 1000,
       });
 
       if (error) throw error;
@@ -42,11 +42,11 @@ const Leaderboard = ({ currentUserEmail }: LeaderboardProps) => {
   const getBadgeIcon = (rank: number) => {
     switch (rank) {
       case 1:
-        return <Crown className="w-8 h-8 text-yellow-400" />;
+        return <Crown className="w-6 h-6 text-yellow-400" />;
       case 2:
-        return <Medal className="w-8 h-8 text-gray-300" />;
+        return <Medal className="w-6 h-6 text-gray-300" />;
       case 3:
-        return <Award className="w-8 h-8 text-amber-600" />;
+        return <Award className="w-6 h-6 text-amber-600" />;
       default:
         return null;
     }
@@ -89,12 +89,16 @@ const Leaderboard = ({ currentUserEmail }: LeaderboardProps) => {
           <Trophy className="w-8 h-8 text-white" />
         </div>
         <h2 className="text-4xl font-bold text-gray-800 mb-2">Top Performers</h2>
-        <p className="text-gray-600">Congratulations to our quiz champions!</p>
       </div>
 
       {/* Leaderboard Container with Glowing Border */}
       <div className="glowing-border-container relative">
         <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
+          {/* Mobile Header */}
+          <div className="md:hidden bg-gradient-to-r from-emerald-500 to-blue-500 px-4 py-3">
+            <h3 className="text-white font-bold text-center text-sm">All Participants</h3>
+          </div>
+
           {/* Table Header */}
           <div className="bg-gradient-to-r from-emerald-500 to-blue-500 px-6 py-4">
             <div className="grid grid-cols-12 gap-4 text-white font-semibold text-sm">

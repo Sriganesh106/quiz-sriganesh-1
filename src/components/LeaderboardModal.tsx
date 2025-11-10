@@ -46,7 +46,7 @@ const LeaderboardModal = ({ isOpen, onClose, currentUserEmail }: LeaderboardModa
         setLoading(true);
       }
       const { data, error } = await supabase.rpc('get_top_leaderboard', {
-        limit_count: 10,
+        limit_count: 1000,
       });
 
       if (error) throw error;
@@ -60,14 +60,15 @@ const LeaderboardModal = ({ isOpen, onClose, currentUserEmail }: LeaderboardModa
     }
   };
 
-  const getBadgeIcon = (rank: number) => {
+  const getBadgeIcon = (rank: number, isMobile = false) => {
+    const iconSize = isMobile ? "w-6 h-6" : "w-10 h-10";
     switch (rank) {
       case 1:
-        return <Crown className="w-10 h-10 text-yellow-400 drop-shadow-lg" />;
+        return <Crown className={`${iconSize} text-yellow-400 drop-shadow-lg`} />;
       case 2:
-        return <Medal className="w-10 h-10 text-gray-300 drop-shadow-lg" />;
+        return <Medal className={`${iconSize} text-gray-300 drop-shadow-lg`} />;
       case 3:
-        return <Award className="w-10 h-10 text-amber-600 drop-shadow-lg" />;
+        return <Award className={`${iconSize} text-amber-600 drop-shadow-lg`} />;
       default:
         return null;
     }
@@ -143,7 +144,7 @@ const LeaderboardModal = ({ isOpen, onClose, currentUserEmail }: LeaderboardModa
             </button>
 
             {/* Header */}
-            <div className="bg-gradient-to-r from-cyan-600 via-blue-600 to-purple-600 px-8 py-6 relative overflow-hidden border-b-2 border-cyan-400/30">
+            <div className="bg-gradient-to-r from-cyan-600 via-blue-600 to-purple-600 px-4 sm:px-8 py-4 sm:py-6 relative overflow-hidden border-b-2 border-cyan-400/30">
               {/* Animated background sparkles */}
               <div className="absolute inset-0 opacity-30">
                 <Sparkles className="absolute top-4 left-10 w-6 h-6 text-cyan-200 animate-pulse" style={{ animationDelay: '0s' }} />
@@ -156,10 +157,10 @@ const LeaderboardModal = ({ isOpen, onClose, currentUserEmail }: LeaderboardModa
                 <div className="inline-flex items-center justify-center w-16 h-16 bg-cyan-400/30 backdrop-blur-sm rounded-full mb-3 shadow-xl shadow-cyan-500/50 border-2 border-cyan-400/50">
                   <Trophy className="w-8 h-8 text-cyan-200 drop-shadow-lg" />
                 </div>
-                <h2 className="text-4xl font-bold text-white mb-1 drop-shadow-lg">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-1 drop-shadow-lg break-words">
                   Leaderboard
                 </h2>
-                <p className="text-cyan-100 text-base drop-shadow">
+                <p className="text-cyan-100 text-sm sm:text-base drop-shadow break-words">
                   🏆 Top Performers • Hall of Fame 🏆
                 </p>
               </div>
@@ -173,22 +174,24 @@ const LeaderboardModal = ({ isOpen, onClose, currentUserEmail }: LeaderboardModa
                   <p className="mt-4 text-cyan-300">Loading champions...</p>
                 </div>
               ) : (
-                <div className="p-6">
-                  <table className="w-full border-collapse rounded-lg overflow-hidden neon-table">
-                    {/* Table Header */}
-                    <thead className="sticky top-0 bg-gradient-to-r from-cyan-900 via-blue-900 to-purple-900 z-10">
-                      <tr>
-                        <th className="py-3 px-4 text-center text-cyan-200 font-bold text-sm border border-cyan-500/50 shadow-inner">Rank</th>
-                        <th className="py-3 px-4 text-left text-cyan-200 font-bold text-sm border border-cyan-500/50 shadow-inner">Name</th>
-                        <th className="py-3 px-4 text-left text-cyan-200 font-bold text-sm border border-cyan-500/50 shadow-inner">Email</th>
-                        <th className="py-3 px-4 text-left text-cyan-200 font-bold text-sm border border-cyan-500/50 shadow-inner">College</th>
-                        <th className="py-3 px-4 text-center text-cyan-200 font-bold text-sm border border-cyan-500/50 shadow-inner">Score</th>
-                      </tr>
-                    </thead>
+                <div className="p-3 sm:p-6">
+                  {/* Desktop Table View - Hidden on Mobile */}
+                  <div className="hidden md:block">
+                    <table className="w-full border-collapse rounded-lg overflow-hidden neon-table">
+                      {/* Table Header */}
+                      <thead className="sticky top-0 bg-gradient-to-r from-cyan-900 via-blue-900 to-purple-900 z-10">
+                        <tr>
+                          <th className="py-3 px-2 lg:px-4 text-center text-cyan-200 font-bold text-xs lg:text-sm border border-cyan-500/50 shadow-inner">Rank</th>
+                          <th className="py-3 px-2 lg:px-4 text-left text-cyan-200 font-bold text-xs lg:text-sm border border-cyan-500/50 shadow-inner">Name</th>
+                          <th className="py-3 px-2 lg:px-4 text-left text-cyan-200 font-bold text-xs lg:text-sm border border-cyan-500/50 shadow-inner">Email</th>
+                          <th className="py-3 px-2 lg:px-4 text-left text-cyan-200 font-bold text-xs lg:text-sm border border-cyan-500/50 shadow-inner">College</th>
+                          <th className="py-3 px-2 lg:px-4 text-center text-cyan-200 font-bold text-xs lg:text-sm border border-cyan-500/50 shadow-inner">Score</th>
+                        </tr>
+                      </thead>
 
-                    {/* Table Body */}
-                    <tbody>
-                      {entries.map((entry, index) => {
+                      {/* Table Body */}
+                      <tbody>
+                        {entries.map((entry, index) => {
                         const isCurrentUser = entry.email === currentUserEmail;
                         const isTopThree = entry.rank <= 3;
 
@@ -206,8 +209,8 @@ const LeaderboardModal = ({ isOpen, onClose, currentUserEmail }: LeaderboardModa
                               animation: `fadeInUp 0.5s ease-out ${index * 0.08}s both`,
                             }}
                           >
-                            {/* Rank Column with Badge */}
-                            <td className="py-3 px-4 text-center relative border border-cyan-500/30">
+                              {/* Rank Column with Badge */}
+                              <td className="py-3 px-2 lg:px-4 text-center relative border border-cyan-500/30">
                               {isTopThree ? (
                                 <div className="relative badge-container inline-block">
                                   {/* Hanging String */}
@@ -224,7 +227,7 @@ const LeaderboardModal = ({ isOpen, onClose, currentUserEmail }: LeaderboardModa
                                     
                                     {/* Badge icon */}
                                     <div className="relative z-10">
-                                      {getBadgeIcon(entry.rank)}
+                                      {getBadgeIcon(entry.rank, true)}
                                     </div>
                                   </div>
                                 </div>
@@ -235,9 +238,9 @@ const LeaderboardModal = ({ isOpen, onClose, currentUserEmail }: LeaderboardModa
                               )}
                             </td>
 
-                            {/* Name Column */}
-                            <td className="py-3 px-4 border border-cyan-500/30">
-                              <p className="font-bold text-white truncate text-base">
+                              {/* Name Column */}
+                              <td className="py-3 px-2 lg:px-4 border border-cyan-500/30">
+                                <p className="font-bold text-white truncate text-sm lg:text-base break-words">
                                 {entry.user_name}
                                 {isCurrentUser && (
                                   <span className="ml-2 text-xs bg-emerald-500 text-white px-2 py-1 rounded-full font-semibold shadow-lg shadow-emerald-500/50">
@@ -247,32 +250,111 @@ const LeaderboardModal = ({ isOpen, onClose, currentUserEmail }: LeaderboardModa
                               </p>
                             </td>
 
-                            {/* Email Column */}
-                            <td className="py-3 px-4 border border-cyan-500/30">
-                              <p className="text-gray-300 text-sm truncate">{entry.email}</p>
-                            </td>
+                              {/* Email Column */}
+                              <td className="py-3 px-2 lg:px-4 border border-cyan-500/30">
+                                <p className="text-gray-300 text-xs lg:text-sm truncate break-words">{entry.email}</p>
+                              </td>
 
-                            {/* College Column */}
-                            <td className="py-3 px-4 border border-cyan-500/30">
-                              <p className="text-gray-300 text-sm truncate">{entry.college_name}</p>
-                            </td>
+                              {/* College Column */}
+                              <td className="py-3 px-2 lg:px-4 border border-cyan-500/30">
+                                <p className="text-gray-300 text-xs lg:text-sm truncate break-words">{entry.college_name}</p>
+                              </td>
 
-                            {/* Score Column */}
-                            <td className="py-3 px-4 text-center border border-cyan-500/30">
-                              <div className="inline-flex flex-col bg-gradient-to-br from-cyan-900/50 to-blue-900/50 px-3 py-1.5 rounded-lg border border-cyan-400/50 shadow-lg shadow-cyan-500/20">
-                                <span className="text-lg font-bold text-cyan-100">
-                                  {entry.correct_answers} / {entry.total_questions}
-                                </span>
-                                <span className="text-xs text-cyan-300 font-semibold">
+                              {/* Score Column */}
+                              <td className="py-3 px-2 lg:px-4 text-center border border-cyan-500/30">
+                                <div className="inline-flex flex-col bg-gradient-to-br from-cyan-900/50 to-blue-900/50 px-2 lg:px-3 py-1.5 rounded-lg border border-cyan-400/50 shadow-lg shadow-cyan-500/20">
+                                  <span className="text-base lg:text-lg font-bold text-cyan-100">
+                                    {entry.correct_answers} / {entry.total_questions}
+                                  </span>
+                                  <span className="text-xs text-cyan-300 font-semibold">
+                                    {entry.score_percentage.toFixed(0)}%
+                                  </span>
+                                </div>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  {/* Mobile Card View */}
+                  <div className="md:hidden space-y-3">
+                    {entries.map((entry, index) => {
+                      const isCurrentUser = entry.email === currentUserEmail;
+                      const isTopThree = entry.rank <= 3;
+
+                      return (
+                        <div
+                          key={index}
+                          className={`rounded-xl p-3 border-2 transition-all duration-300 ${
+                            isCurrentUser 
+                              ? 'bg-gradient-to-r from-emerald-900/40 to-green-900/40 border-emerald-400/60' 
+                              : isTopThree
+                              ? 'bg-gradient-to-r from-purple-900/20 via-gray-900/40 to-blue-900/20 border-cyan-500/30'
+                              : 'bg-gray-900/30 border-cyan-500/30'
+                          }`}
+                          style={{
+                            animation: `fadeInUp 0.5s ease-out ${index * 0.08}s both`,
+                          }}
+                        >
+                          <div className="flex items-center gap-3 mb-2">
+                            {/* Rank Badge */}
+                            <div className="flex-shrink-0">
+                              {isTopThree ? (
+                                <div className="relative">
+                                  <div
+                                    className={`w-12 h-12 rounded-full bg-gradient-to-br ${getBadgeGradient(
+                                      entry.rank
+                                    )} flex items-center justify-center shadow-lg ${getBadgeGlow(entry.rank)}`}
+                                  >
+                                    <div className="absolute inset-1 rounded-full bg-white/20"></div>
+                                    <div className="relative z-10">
+                                      {getBadgeIcon(entry.rank, true)}
+                                    </div>
+                                  </div>
+                                </div>
+                              ) : (
+                                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-gray-700 to-gray-800 flex items-center justify-center font-bold text-cyan-200 shadow-lg border-2 border-cyan-500/50">
+                                  {entry.rank}
+                                </div>
+                              )}
+                            </div>
+
+                            {/* Name and Score */}
+                            <div className="flex-1 min-w-0">
+                              <p className="font-bold text-white text-sm truncate">
+                                {entry.user_name}
+                                {isCurrentUser && (
+                                  <span className="ml-2 text-xs bg-emerald-500 text-white px-2 py-0.5 rounded-full font-semibold">
+                                    You
+                                  </span>
+                                )}
+                              </p>
+                              <p className="text-gray-400 text-xs truncate">{entry.email}</p>
+                            </div>
+
+                            {/* Score */}
+                            <div className="flex-shrink-0 bg-gradient-to-br from-cyan-900/50 to-blue-900/50 px-2 py-1 rounded-lg border border-cyan-400/50">
+                              <div className="text-center">
+                                <div className="text-sm font-bold text-cyan-100">
+                                  {entry.correct_answers}/{entry.total_questions}
+                                </div>
+                                <div className="text-xs text-cyan-300 font-semibold">
                                   {entry.score_percentage.toFixed(0)}%
-                                </span>
+                                </div>
                               </div>
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
+                            </div>
+                          </div>
+
+                          {/* College */}
+                          <div className="text-xs text-gray-400 truncate pl-15">
+                            🎓 {entry.college_name}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
               )}
 
