@@ -16,11 +16,11 @@ export default function ProgressLine({ currentQuestion, totalQuestions, phase }:
         <div className="flex items-center gap-2">
           {isBossRound ? (
             <>
-              <Flame className="w-5 h-5 text-red-500 animate-bounce" />
+              <Flame className="w-5 h-5 text-green-500 animate-bounce" />
               <span className="text-sm font-bold text-white animate-pulse">
                 FINAL BOSS ROUND - Choose Incorrect!
               </span>
-              <Flame className="w-5 h-5 text-orange-500 animate-bounce" style={{ animationDelay: '0.1s' }} />
+              <Flame className="w-5 h-5 text-green-400 animate-bounce" style={{ animationDelay: '0.1s' }} />
             </>
           ) : (
             <>
@@ -38,7 +38,7 @@ export default function ProgressLine({ currentQuestion, totalQuestions, phase }:
         <div
           className={`h-full rounded-full transition-all duration-500 ease-out relative overflow-hidden ${
             isBossRound
-              ? 'bg-gradient-to-r from-red-600 via-red-500 to-orange-500 shadow-lg shadow-red-500/50'
+              ? 'bg-gradient-to-r from-green-600 via-green-500 to-green-400 shadow-lg shadow-green-500/50'
               : 'bg-gradient-to-r from-emerald-500 via-green-500 to-emerald-400 shadow-md shadow-emerald-500/30'
           }`}
           style={{ width: `${progress}%` }}
