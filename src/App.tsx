@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Sparkles } from 'lucide-react';
+import { Sparkles, Trophy } from 'lucide-react';
 import Countdown from './components/Countdown';
 import BossTransition from './components/BossTransition';
 import ProgressLine from './components/ProgressLine';
@@ -7,8 +7,8 @@ import QuestionCard, { QuizQuestion } from './components/QuestionCard';
 import Timer from './components/Timer';
 import Results from './components/Results';
 import UserDetailsForm from './components/UserDetailsForm';
-import LeaderboardModal from './components/LeaderboardModal';
 import LeaderboardButton from './components/LeaderboardButton';
+import LeaderboardModal from './components/LeaderboardModal';
 import { supabase } from './lib/supabase';
 
 type QuizState = 'user-details' | 'welcome' | 'countdown' | 'quiz' | 'boss-transition' | 'results';
@@ -172,6 +172,14 @@ function App() {
     setUserDetails(null);
   };
 
+  const handleLeaderboardOpen = () => {
+    setIsLeaderboardOpen(true);
+  };
+
+  const handleLeaderboardClose = () => {
+    setIsLeaderboardOpen(false);
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center p-4">
@@ -207,12 +215,7 @@ function App() {
   if (quizState === 'welcome') {
     return (
       <>
-        <LeaderboardButton onClick={() => setIsLeaderboardOpen(true)} />
-        <LeaderboardModal 
-          isOpen={isLeaderboardOpen} 
-          onClose={() => setIsLeaderboardOpen(false)}
-          currentUserEmail={userDetails?.email}
-        />
+        <LeaderboardButton onClick={handleLeaderboardOpen} />
         <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center p-4">
         <div
           className="text-center max-w-2xl"
@@ -278,6 +281,11 @@ function App() {
           }
         `}</style>
       </div>
+      <LeaderboardModal 
+        isOpen={isLeaderboardOpen} 
+        onClose={handleLeaderboardClose}
+        currentUserEmail={userDetails?.email}
+      />
       </>
     );
   }
@@ -332,18 +340,18 @@ function App() {
     const correctAnswers = answers.filter((a) => a.isCorrect).length;
     return (
       <>
-        <LeaderboardButton onClick={() => setIsLeaderboardOpen(true)} />
-        <LeaderboardModal 
-          isOpen={isLeaderboardOpen} 
-          onClose={() => setIsLeaderboardOpen(false)}
-          currentUserEmail={userDetails?.email}
-        />
+        <LeaderboardButton onClick={handleLeaderboardOpen} />
         <Results
           correctAnswers={correctAnswers}
           totalQuestions={questions.length}
           timeTaken={timeTaken}
           onRestart={restartQuiz}
           userEmail={userDetails?.email}
+        />
+        <LeaderboardModal 
+          isOpen={isLeaderboardOpen} 
+          onClose={handleLeaderboardClose}
+          currentUserEmail={userDetails?.email}
         />
       </>
     );

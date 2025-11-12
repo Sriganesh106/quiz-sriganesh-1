@@ -1,4 +1,4 @@
-import { Trophy, Sparkles } from 'lucide-react';
+import { Trophy } from 'lucide-react';
 
 interface LeaderboardButtonProps {
   onClick: () => void;
@@ -10,34 +10,12 @@ const LeaderboardButton = ({ onClick }: LeaderboardButtonProps) => {
       onClick={onClick}
       className="leaderboard-button group"
     >
-      {/* Container to contain glow */}
-      <div className="relative glow-container">
-        {/* Glowing background - contained within button */}
-        <div className="absolute inset-0 bg-gradient-to-r from-emerald-500 via-blue-500 to-purple-500 rounded-2xl blur-md opacity-60 group-hover:opacity-80 transition-opacity duration-300"></div>
-        
-        {/* Button content */}
-        <div className="relative flex items-center gap-3 bg-gradient-to-r from-emerald-500 via-blue-500 to-purple-500 px-6 py-3 rounded-2xl shadow-xl transform transition-all duration-300 group-hover:scale-105 group-hover:shadow-2xl">
-        {/* Icon container */}
-        <div className="relative">
-          <Trophy className="w-6 h-6 text-white drop-shadow-lg" />
-          {/* Sparkle effect on icon */}
-          <Sparkles className="absolute -top-1 -right-1 w-3 h-3 text-yellow-300 animate-pulse" />
-        </div>
-        
-        {/* Text */}
-        <span className="text-white font-bold text-lg drop-shadow-md">
-          Leaderboard
-        </span>
-        
-        {/* Animated shine effect */}
-        <div className="absolute inset-0 rounded-2xl shine-effect"></div>
-        </div>
+      {/* Button content */}
+      <div className="relative flex items-center justify-center bg-gradient-to-r from-amber-400 to-amber-500 w-10 h-10 rounded-full shadow-lg transform transition-all duration-200 group-hover:scale-105 group-hover:shadow-xl border-2 border-amber-300/50">
+        <Trophy className="w-5 h-5 text-white drop-shadow-sm" />
+        <div className="absolute inset-0 rounded-full shine-effect"></div>
       </div>
       
-      {/* Floating particles */}
-      <div className="floating-particle particle-1"></div>
-      <div className="floating-particle particle-2"></div>
-      <div className="floating-particle particle-3"></div>
 
       <style>{`
         .leaderboard-button {
@@ -50,13 +28,6 @@ const LeaderboardButton = ({ onClick }: LeaderboardButtonProps) => {
           background: transparent;
         }
         
-        /* Container to contain the glow within button bounds */
-        .glow-container {
-          display: inline-block;
-          overflow: hidden;
-          border-radius: 1rem;
-          padding: 4px;
-        }
 
         /* Shine effect */
         .shine-effect {
@@ -76,76 +47,104 @@ const LeaderboardButton = ({ onClick }: LeaderboardButtonProps) => {
           100% { transform: translateX(200%); }
         }
 
-        /* Floating particles */
-        .floating-particle {
-          position: absolute;
-          width: 4px;
-          height: 4px;
-          background: white;
-          border-radius: 50%;
-          opacity: 0;
-          box-shadow: 0 0 8px 2px rgba(255, 255, 255, 0.8);
-        }
 
-        .particle-1 {
-          top: 20%;
-          left: 10%;
-          animation: floatParticle 4s ease-in-out infinite;
-          animation-delay: 0s;
-        }
-
-        .particle-2 {
-          top: 50%;
-          right: 15%;
-          animation: floatParticle 5s ease-in-out infinite;
-          animation-delay: 1.5s;
-        }
-
-        .particle-3 {
-          bottom: 25%;
-          left: 25%;
-          animation: floatParticle 4.5s ease-in-out infinite;
-          animation-delay: 3s;
-        }
-
-        @keyframes floatParticle {
-          0%, 100% {
-            opacity: 0;
-            transform: translateY(0) scale(0);
-          }
-          10% {
-            opacity: 1;
-            transform: translateY(-5px) scale(1);
-          }
-          90% {
-            opacity: 1;
-            transform: translateY(-20px) scale(1);
-          }
-          100% {
-            opacity: 0;
-            transform: translateY(-30px) scale(0);
+        /* Responsive positioning and sizing */
+        
+        /* Tablet and small desktop */
+        @media (max-width: 1024px) {
+          .leaderboard-button {
+            top: 15px;
+            right: 15px;
           }
         }
-
-        /* Responsive positioning */
+        
+        /* Mobile landscape and small tablets */
         @media (max-width: 768px) {
           .leaderboard-button {
-            top: 10px;
-            right: 10px;
+            top: 12px;
+            right: 12px;
           }
           
           .leaderboard-button .relative {
-            padding: 0.625rem 1rem;
+            width: 2.5rem;
+            height: 2.5rem;
           }
           
-          .leaderboard-button span {
-            font-size: 1rem;
+          .leaderboard-button .relative .w-5 {
+            width: 1.125rem;
+            height: 1.125rem;
           }
+          
+        }
+        
+        /* Mobile portrait */
+        @media (max-width: 480px) {
+          .leaderboard-button {
+            top: 8px;
+            right: 8px;
+          }
+          
+          .leaderboard-button .relative {
+            width: 2.25rem;
+            height: 2.25rem;
+          }
+          
+          .leaderboard-button .relative .w-5 {
+            width: 1rem;
+            height: 1rem;
+          }
+          
+        }
+        
+        /* Very small mobile devices */
+        @media (max-width: 360px) {
+          .leaderboard-button {
+            top: 6px;
+            right: 6px;
+          }
+          
+          .leaderboard-button .relative {
+            width: 2rem;
+            height: 2rem;
+          }
+          
+          .leaderboard-button .relative .w-5 {
+            width: 0.875rem;
+            height: 0.875rem;
+          }
+          
         }
 
         /* Button press effect */
         .leaderboard-button:active .relative {
           transform: scale(0.95);
+        }
+        
+        /* Enhanced touch feedback for mobile */
+        @media (hover: none) and (pointer: coarse) {
+          .leaderboard-button {
+            /* Ensure minimum touch target size of 44px */
+            min-width: 44px;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
+          
+          .leaderboard-button:active {
+            /* More pronounced feedback on touch */
+            transform: scale(0.9);
+          }
+          
+          /* Disable hover effects on touch devices */
+          .leaderboard-button:hover .relative {
+            transform: none;
+          }
+          
+          /* But keep the active/pressed state */
+          .leaderboard-button:active .relative {
+            transform: scale(0.85);
+          }
         }
       `}</style>
     </button>
