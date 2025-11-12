@@ -347,6 +347,9 @@ function App() {
           timeTaken={timeTaken}
           onRestart={restartQuiz}
           userEmail={userDetails?.email}
+          userName={userDetails?.name}
+          userMobile={userDetails?.mobile}
+          userCollege={userDetails?.college}
         />
         <LeaderboardModal 
           isOpen={isLeaderboardOpen} 

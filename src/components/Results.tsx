@@ -1,4 +1,6 @@
-import { Trophy, Clock, Target, RotateCcw } from 'lucide-react';
+import { Trophy, Clock, Target, RotateCcw, Download, Copy, Check } from 'lucide-react';
+import { useState } from 'react';
+import { jsPDF } from 'jspdf';
 
 interface ResultsProps {
   correctAnswers: number;
@@ -6,6 +8,9 @@ interface ResultsProps {
   timeTaken: number;
   onRestart: () => void;
   userEmail?: string;
+  userName?: string;
+  userMobile?: string;
+  userCollege?: string;
 }
 
 export default function Results({
@@ -14,7 +19,11 @@ export default function Results({
   timeTaken,
   onRestart,
   userEmail,
+  userName,
+  userMobile,
+  userCollege,
 }: ResultsProps) {
+  const [copied, setCopied] = useState(false);
   const percentage = Math.round((correctAnswers / totalQuestions) * 100);
   const formatTime = (totalSeconds: number) => {
     const mins = Math.floor(totalSeconds / 60);
@@ -31,6 +40,200 @@ export default function Results({
 
   const performance = getPerformanceMessage();
 
+  const generateResultSummary = () => {
+    const currentDate = new Date().toLocaleDateString();
+    const currentTime = new Date().toLocaleTimeString();
+    
+    return `SWAVIK INTERNSHIP
+Quiz Result Summary
+
+` +
+           `Generated on: ${currentDate} at ${currentTime}\n\n` +
+           `Student Details:\n` +
+           `Name: ${userName || 'N/A'}\n` +
+           `Email: ${userEmail || 'N/A'}\n` +
+           `Mobile: ${userMobile || 'N/A'}\n` +
+           `College: ${userCollege || 'N/A'}\n\n` +
+           `Quiz Performance:\n` +
+           `Total Questions: ${totalQuestions}\n` +
+           `Correct Answers: ${correctAnswers}\n` +
+           `Accuracy: ${percentage}%\n` +
+           `Time Taken: ${formatTime(timeTaken)}\n` +
+           `Performance Level: ${performance.text}\n\n` +
+           `Quiz Breakdown:\n` +
+           `• Standard Round: 8 questions\n` +
+           `• Final Boss Round: 7 questions\n\n` +
+           `Thank you for participating in the SWAVIK Internship Quiz!`;
+  };
+
+  const downloadResults = () => {
+    const resultText = generateResultSummary();
+    const blob = new Blob([resultText], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `SWAVIK_Quiz_Results_${userName?.replace(/\s+/g, '_') || 'User'}_${new Date().toISOString().split('T')[0]}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  const copyResults = async () => {
+    try {
+      await navigator.clipboard.writeText(generateResultSummary());
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy results:', err);
+    }
+  };
+
+  const downloadPDF = () => {
+    const doc = new jsPDF();
+    const currentDate = new Date().toLocaleDateString();
+    const currentTime = new Date().toLocaleTimeString();
+    
+    // Set up colors
+    const primaryColor = [5, 150, 105]; // Emerald green
+    const textColor = [31, 41, 55]; // Dark gray
+    const lightGray = [107, 114, 128];
+    
+    // Header - SWAVIK INTERNSHIP
+    doc.setFontSize(24);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(...primaryColor);
+    doc.text('SWAVIK INTERNSHIP', 105, 25, { align: 'center' });
+    
+    // Subtitle
+    doc.setFontSize(16);
+    doc.setTextColor(...textColor);
+    doc.text('Quiz Result Summary', 105, 35, { align: 'center' });
+    
+    // Date and time
+    doc.setFontSize(10);
+    doc.setTextColor(...lightGray);
+    doc.text(`Generated on: ${currentDate} at ${currentTime}`, 105, 45, { align: 'center' });
+    
+    // Draw header line
+    doc.setDrawColor(...primaryColor);
+    doc.setLineWidth(1);
+    doc.line(20, 50, 190, 50);
+    
+    let yPos = 65;
+    
+    // Student Details Section
+    doc.setFontSize(14);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(...textColor);
+    doc.text('Student Details', 20, yPos);
+    yPos += 10;
+    
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'normal');
+    
+    if (userName) {
+      doc.setFont('helvetica', 'bold');
+      doc.text('Name:', 25, yPos);
+      doc.setFont('helvetica', 'normal');
+      doc.text(userName, 50, yPos);
+      yPos += 8;
+    }
+    
+    if (userEmail) {
+      doc.setFont('helvetica', 'bold');
+      doc.text('Email:', 25, yPos);
+      doc.setFont('helvetica', 'normal');
+      doc.text(userEmail, 50, yPos);
+      yPos += 8;
+    }
+    
+    if (userMobile) {
+      doc.setFont('helvetica', 'bold');
+      doc.text('Mobile:', 25, yPos);
+      doc.setFont('helvetica', 'normal');
+      doc.text(userMobile, 50, yPos);
+      yPos += 8;
+    }
+    
+    if (userCollege) {
+      doc.setFont('helvetica', 'bold');
+      doc.text('College:', 25, yPos);
+      doc.setFont('helvetica', 'normal');
+      doc.text(userCollege, 50, yPos);
+      yPos += 8;
+    }
+    
+    yPos += 10;
+    
+    // Performance Score (Large)
+    doc.setFontSize(36);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(...primaryColor);
+    doc.text(`${percentage}%`, 105, yPos, { align: 'center' });
+    yPos += 15;
+    
+    doc.setFontSize(16);
+    doc.setTextColor(...textColor);
+    doc.text(performance.text, 105, yPos, { align: 'center' });
+    yPos += 20;
+    
+    // Quiz Performance Section
+    doc.setFontSize(14);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Quiz Performance', 20, yPos);
+    yPos += 10;
+    
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'normal');
+    
+    // Performance details in two columns
+    doc.setFont('helvetica', 'bold');
+    doc.text('Total Questions:', 25, yPos);
+    doc.setFont('helvetica', 'normal');
+    doc.text(totalQuestions.toString(), 70, yPos);
+    
+    doc.setFont('helvetica', 'bold');
+    doc.text('Accuracy:', 110, yPos);
+    doc.setFont('helvetica', 'normal');
+    doc.text(`${percentage}%`, 140, yPos);
+    yPos += 8;
+    
+    doc.setFont('helvetica', 'bold');
+    doc.text('Correct Answers:', 25, yPos);
+    doc.setFont('helvetica', 'normal');
+    doc.text(correctAnswers.toString(), 70, yPos);
+    
+    doc.setFont('helvetica', 'bold');
+    doc.text('Time Taken:', 110, yPos);
+    doc.setFont('helvetica', 'normal');
+    doc.text(formatTime(timeTaken), 140, yPos);
+    yPos += 15;
+    
+    // Quiz Breakdown Section
+    doc.setFontSize(14);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Quiz Breakdown', 20, yPos);
+    yPos += 10;
+    
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'normal');
+    doc.text('• Standard Round: 8 questions', 25, yPos);
+    yPos += 8;
+    doc.text('• Final Boss Round: 7 questions', 25, yPos);
+    yPos += 20;
+    
+    // Footer
+    doc.setFontSize(10);
+    doc.setTextColor(...lightGray);
+    doc.text('Thank you for participating in the SWAVIK Internship Quiz!', 105, yPos, { align: 'center' });
+    doc.text('This document was generated automatically.', 105, yPos + 8, { align: 'center' });
+    
+    // Save the PDF
+    const fileName = `SWAVIK_Quiz_Results_${userName?.replace(/\s+/g, '_') || 'User'}_${new Date().toISOString().split('T')[0]}.pdf`;
+    doc.save(fileName);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center p-4">
       <div
@@ -39,12 +242,16 @@ export default function Results({
           animation: 'slideUp 0.5s ease-out',
         }}
       >
-        <div className="text-center mb-8">
+        {/* SWAVIK Branding */}
+        <div className="text-center mb-6">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-4 break-words">
+            SWAVIK INTERNSHIP
+          </h1>
           <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-emerald-400 to-blue-500 rounded-full mb-4 shadow-lg">
             <Trophy className="w-10 h-10 text-white" />
           </div>
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-2 break-words">Quiz Complete!</h1>
-          <p className={`text-xl sm:text-2xl font-semibold ${performance.color} break-words`}>
+          <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-800 mb-2 break-words">Quiz Complete!</h2>
+          <p className={`text-lg sm:text-xl font-semibold ${performance.color} break-words`}>
             {performance.text}
           </p>
         </div>
@@ -91,7 +298,55 @@ export default function Results({
           </div>
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-4">
+        {/* User Details Section */}
+        {(userName || userEmail || userMobile || userCollege) && (
+          <div className="bg-gradient-to-r from-gray-50 to-gray-100 rounded-2xl p-6 mb-6 border border-gray-200">
+            <h3 className="text-lg font-bold text-gray-800 mb-4 text-center">Student Details</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+              {userName && (
+                <div className="flex justify-between items-center">
+                  <span className="font-medium text-gray-600">Name:</span>
+                  <span className="font-semibold text-gray-800 break-words">{userName}</span>
+                </div>
+              )}
+              {userEmail && (
+                <div className="flex justify-between items-center">
+                  <span className="font-medium text-gray-600">Email:</span>
+                  <span className="font-semibold text-gray-800 break-words">{userEmail}</span>
+                </div>
+              )}
+              {userMobile && (
+                <div className="flex justify-between items-center">
+                  <span className="font-medium text-gray-600">Mobile:</span>
+                  <span className="font-semibold text-gray-800">{userMobile}</span>
+                </div>
+              )}
+              {userCollege && (
+                <div className="flex justify-between items-center">
+                  <span className="font-medium text-gray-600">College:</span>
+                  <span className="font-semibold text-gray-800 break-words">{userCollege}</span>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Action Buttons */}
+        <div className="flex flex-col sm:flex-row gap-4 mb-6">
+          <button
+            onClick={downloadPDF}
+            className="flex-1 bg-gradient-to-r from-red-500 to-red-600 text-white font-semibold py-4 px-6 rounded-xl hover:from-red-600 hover:to-red-700 transition-all duration-200 transform hover:scale-[1.02] shadow-lg flex items-center justify-center gap-2"
+          >
+            <Download className="w-5 h-5" />
+            Download PDF
+          </button>
+          <button
+            onClick={copyResults}
+            className="flex-1 bg-gradient-to-r from-purple-500 to-purple-600 text-white font-semibold py-4 px-6 rounded-xl hover:from-purple-600 hover:to-purple-700 transition-all duration-200 transform hover:scale-[1.02] shadow-lg flex items-center justify-center gap-2"
+          >
+            {copied ? <Check className="w-5 h-5" /> : <Copy className="w-5 h-5" />}
+            {copied ? 'Copied!' : 'Copy Results'}
+          </button>
           <button
             onClick={onRestart}
             className="flex-1 bg-gradient-to-r from-emerald-500 to-green-500 text-white font-semibold py-4 px-6 rounded-xl hover:from-emerald-600 hover:to-green-600 transition-all duration-200 transform hover:scale-[1.02] shadow-lg flex items-center justify-center gap-2"
